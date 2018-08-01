@@ -12,6 +12,12 @@ import java.util.*;
 
 public class AP {
 
+    // 13th July Onsite : Design KVP (Image sharing service, TinyUrl  + image storage)
+    // from Inorder and PostOrder create tree
+    // LP -- related questions
+    // DDOS acctack -- Log <CustID,TimeStamp,ErrorID> alert if same customer 5 times same error in 5 minutes
+    // Amazon Dropbox System design
+
     public class test {
         private String page;
         private float per_page;
@@ -98,11 +104,146 @@ public class AP {
         //productExceptSelf(new int[]{2,3,4,5});
 
         //findAnagrams1("baa","aa");
-        Trie t = new Trie();
+/*        Trie t = new Trie();
         t.insert("ab");
         t.insert("acb");
         t.insert("abq");
         t.getAllWithPrefix("a");
+        hammingWeight(Integer.MAX_VALUE);*/
+        LinkedList_main.ListNode root1 = new LinkedList_main.ListNode(1);
+        root1.next=new LinkedList_main.ListNode(2);
+        root1.next.next=new LinkedList_main.ListNode(4);
+        root1.next.next.next=new LinkedList_main.ListNode(5);
+        root1.next.next.next.next=new LinkedList_main.ListNode(6);
+        root1.next.next.next.next.next=new LinkedList_main.ListNode(7);
+        oddEvenList(root1);
+
+
+    }
+
+    public static LinkedList_main.ListNode oddEvenList(LinkedList_main.ListNode head) {
+        if(head==null) return head;
+        LinkedList_main.ListNode temp =head;
+        LinkedList_main.ListNode odd =null;
+        LinkedList_main.ListNode even =null;
+        LinkedList_main.ListNode evenHead=null;
+        LinkedList_main.ListNode oddHead=null;
+        while(head!=null){
+            int n = head.val;
+            if(n%2==0){
+                if(even ==null){
+                    even = head;
+                    evenHead=even;
+                }
+                else even.next=head;
+            }
+            else {
+                if(odd==null){
+                    odd=head;
+                    oddHead=odd;
+                }
+                else odd.next=head;
+            }
+            head=head.next;
+        }
+        if(odd !=null) odd.next=null;
+        if(even !=null) even.next=null;
+        if(temp.val%2==0){
+            even.next=oddHead;
+            return evenHead;
+        }
+        else odd.next=evenHead;
+        return oddHead;
+    }
+
+
+
+
+    public String longestCommonPrefix(String[] strs) {
+        List<char[]> list = new ArrayList<>();
+        String s1 = strs[0];
+        for(String s : strs) list.add(s.toCharArray());
+        int j=0;
+        for(int i =0; i< list.size(); i++){
+            if(s1.charAt(j)!=list.get(i)[j]) break;
+            j++;
+        }
+        return s1.substring(0,j);
+
+    }
+    public static  int hammingWeight(int n) {
+        int c=0;
+        while(n>0){
+            if((n&1)==1) c++;
+            n= n>>1;
+        }
+        return c;
+
+    }
+    
+
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        List<List<Integer>> result = new LinkedList<List<Integer>>();
+        if (nums == null || nums.length < 4) return result;
+        Arrays.sort(nums);
+        // since this problem ask for the solution of 4 sum, so I just pass 4 to the method. But you can change 4 to any other K
+        return findSum(nums, target, 0, 4);
+    }
+    private List<List<Integer>> findSum(int[] nums, int target, int start, int k) {
+        if (k == 2) {
+            // Do two sum
+            List<List<Integer>> curr = new LinkedList<List<Integer>>();
+            int left = start;
+            int right = nums.length - 1;
+            while (left < right) {
+                if (nums[left] + nums[right] == target) {
+                    List<Integer> list = new LinkedList<Integer>();
+                    list.add(nums[left]); list.add(nums[right]);
+                    curr.add(list);
+                    while (left < right && nums[left] == nums[left + 1]) left ++;
+                    while (left < right && nums[right] == nums[right - 1]) right --;
+                    left ++; right --;
+                } else if (nums[left] + nums[right] > target) right --;
+                else left ++;
+            }
+            return curr;
+        }
+
+        List<List<Integer>> curr = new LinkedList<List<Integer>>();
+        for (int i = start; i < nums.length - k + 1; i ++) {
+            for (List<Integer> l : findSum(nums, target - nums[i], i + 1, k - 1)) {
+                l.add(nums[i]);
+                curr.add(l);
+            }
+            while (i < nums.length - k && nums[i] == nums[i + 1]) i ++;
+        }
+        return curr;
+    }
+    public List<List<Integer>> verticalOrder1(TreeNode root) {
+        List<List<Integer>> res = new ArrayList<>();
+        if(root ==null) return res;
+        Queue<TreeNode> q = new LinkedList<>();
+        Queue<Integer> c = new LinkedList<>();
+        HashMap<Integer,List<Integer>> map = new HashMap<>();
+        q.offer(root);
+        c.offer(0);
+        while(!q.isEmpty()){
+            TreeNode l = q.poll();
+            int lc = c.poll();
+            if(map.containsKey(lc)) map.get(lc).add(l.val);
+            else map.put(lc, new ArrayList<>(Arrays.asList(l.val)));
+            if(l.left!=null){
+                q.offer(l.left);
+                c.offer(lc-1);
+            }
+            if(l.right!=null){
+                q.offer(l.right);
+                c.offer(lc+1);
+            }
+        }
+
+        res.addAll(map.values());
+        return res;
     }
 
 
